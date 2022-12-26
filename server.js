@@ -1,14 +1,18 @@
 // Dependencies
 const express = require('express');
 const socket = require('socket.io');
-const http = require('serverless-http');
+const http = require('http');
 const path = require('path');
+const compression = require('compression');
+const helmet = require('helmet');
 
 const app = express();
 var server = http.Server(app);
 var io = socket(server);
 
 app.set('port', 5000);
+app.use(compression());
+app.use(helmet());
 app.use('/static', express.static(__dirname + '/static'));
 
 app.get('/', function(req, res) {
