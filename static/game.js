@@ -5,6 +5,7 @@ var movement = {
     A: false,
     S: false,
     D: false,
+    direction: 90
 }
 
 document.addEventListener('keydown', (event) => {
@@ -20,6 +21,9 @@ document.addEventListener('keydown', (event) => {
             break;
         case 'D':
             movement.D = true
+            break;
+        case ' ':
+            movement.Fire = true
             break;
     }
 })
@@ -41,11 +45,22 @@ document.addEventListener('keyup', (event) => {
     }
 })
 
+document.addEventListener('mousemove', (event) => {
+    movement.direction = Math.atan2( event.pageY - localPlayer.y, event.pageX - localPlayer.x );
+})
+
+document.addEventListener('onbeforeunload', (event) => {
+    io.emit('close')
+});
+
 socket.emit('new');
 
 setInterval(() => {
     socket.emit('movement', movement)
+    movement.Fire = false
 }, 1000 / 60)
+
+let localPlayer;
 
 var canvas = document.getElementById('canvas');
 canvas.width = 800;
@@ -58,7 +73,30 @@ socket.on('state', function(players) {
   for (var id in players) {
     var player = players[id];
     context.beginPath();
+
+    context.translate(player.x, player.y)
+    context.rotate(player.direction)
+    context.fillRect(20, -5, 30, 10);
+    context.rotate(-player.direction)
+    context.translate(-player.x, -player.y)
+
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
     context.fill();
+    if (id == socket.id) {
+        localPlayer = player;
+    }
   }
 });
+socket.on('entities', function(entities) {
+    console.log(entities);
+    for (var id in entities) {
+        var entity = entities[id];
+        context.beginPath();
+
+        context.translate(entity.x, entity.y)
+        context.rotate(entity.direction)
+        context.fillRect(20, -5, 5, 5);
+        context.rotate(-entity.direction)
+        context.translate(-entity.x, -entity.y)
+    }
+})
