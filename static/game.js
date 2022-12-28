@@ -24,10 +24,11 @@ document.addEventListener('keydown', (event) => {
         case 'D':
             movement.D = true
             break;
-        case ' ':
-            movement.Fire = true
-            break;
     }
+})
+
+document.addEventListener('mousedown', () => {
+    movement.Fire = true
 })
 
 document.addEventListener('keyup', (event) => {
