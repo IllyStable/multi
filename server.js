@@ -33,17 +33,24 @@ io.on('connection', function(socket) {
         players[socket.id] = {
             x: 300,
             y: 300,
-            direction: 90
+            direction: 90,
+            speed: 5,
+            slowcooldown: 0
         }
     });
     socket.on('movement', (data) => {
         var player = players[socket.id] || {};
-        if (data.A) player.x -= 5
-        if (data.W) player.y -= 5
-        if (data.D) player.x += 5
-        if (data.S) player.y += 5
+        if (data.A) player.x -= player.speed
+        if (data.W) player.y -= player.speed
+        if (data.D) player.x += player.speed
+        if (data.S) player.y += player.speed
         if (data.Fire) bullets.push({x: player.x, y: player.y, direction: player.direction, time: 0})
         player.direction = data.direction
+    })
+    socket.on('hit', () => {
+        var player = players[socket.id] || {};
+        player.speed = 2;
+        player.slowcooldown = 1;
     })
     socket.on('disconnect', () => {
         delete players[socket.id];
@@ -68,4 +75,14 @@ setInterval(() => {
         }
     }
     bullets = newBullets
+    for (id in players) {
+        player = players[id]
+        if (player.slowcooldown > 0) {
+            player.slowcooldown++
+            if (player.slowcooldown > 10*(1000/60)) {
+                player.slowcooldown = 0
+                player.speed = 5
+            }
+        }
+    }
 }, 1000 / 60)

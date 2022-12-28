@@ -8,6 +8,8 @@ var movement = {
     direction: 90
 }
 
+var hit = false
+
 document.addEventListener('keydown', (event) => {
     switch (event.key.toUpperCase()) {
         case 'W':
@@ -98,5 +100,12 @@ socket.on('entities', function(entities) {
         context.fillRect(20, -5, 5, 5);
         context.rotate(-entity.direction)
         context.translate(-entity.x, -entity.y)
+
+        if (!(entity.x - 5 >= localPlayer.x + 10 || entity.y - 5 >= localPlayer.y + 10 || entity.x + 5 <= localPlayer.x - 5 || entity.y + 5 <= localPlayer.y - 10)) {
+            hit = true;
+            socket.emit('hit');
+        } else {
+            hit = false;
+        }
     }
 })
