@@ -35,7 +35,8 @@ io.on('connection', function(socket) {
             y: 300,
             direction: 90,
             speed: 5,
-            slowcooldown: 0
+            slowcooldown: 0,
+            lives: 3,
         }
     });
     socket.on('movement', (data) => {
@@ -47,10 +48,20 @@ io.on('connection', function(socket) {
         if (data.Fire) bullets.push({x: player.x + Math.cos(player.direction) * 30, y: player.y + Math.sin(player.direction) * 30, direction: player.direction, time: 0})
         player.direction = data.direction
     })
-    socket.on('hit', () => {
+    socket.on('hit', (id) => {
         var player = players[socket.id] || {};
         player.speed = 1;
+        player.lives--;
+        if (player.lives == 0) players[socket.id] = {
+            x: 300,
+            y: 300,
+            direction: 90,
+            speed: 5,
+            slowcooldown: 0,
+            lives: 3,
+        }
         player.slowcooldown = 1;
+        bullets.splice(id, 1)
     })
     socket.on('disconnect', () => {
         delete players[socket.id];

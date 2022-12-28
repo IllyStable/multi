@@ -86,10 +86,24 @@ socket.on('state', function(players) {
     context.rotate(-player.direction)
     context.translate(-player.x, -player.y)
 
+    context.closePath();
+    context.beginPath();
+
     context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
     context.fill();
     if (id == socket.id) {
         localPlayer = player;
+    }
+    context.closePath();
+    context.fillStyle="green";
+
+    let drawX = 30
+    for (var i = 0; i < player.lives; i++) {
+        context.beginPath();
+        context.arc(drawX, 10, 10, 0, 2 * Math.PI);
+        drawX += 30;
+        context.closePath();
+        context.fill();
     }
   }
 });
@@ -109,7 +123,7 @@ socket.on('entities', function(entities) {
 
         if (!(entity.x - 5 >= localPlayer.x + 10 || entity.y - 5 >= localPlayer.y + 10 || entity.x + 5 <= localPlayer.x - 5 || entity.y + 5 <= localPlayer.y - 10)) {
             hit = true;
-            socket.emit('hit');
+            socket.emit('hit', id);
         } else {
             hit = false;
         }
