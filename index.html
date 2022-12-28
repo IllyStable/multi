@@ -6,9 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="/socket.io/socket.io.js"></script>
+    <style>
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" width="window.innerHeight" height="window.innerWidth"></canvas>
 </body>
 <script src="/static/game.js"></script>
 </html>

@@ -63,12 +63,12 @@ setInterval(() => {
 let localPlayer;
 
 var canvas = document.getElementById('canvas');
-canvas.width = 800;
-canvas.height = 600;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 var context = canvas.getContext('2d');
 socket.on('state', function(players) {
   console.log(players);
-  context.clearRect(0, 0, 800, 600);
+  context.clearRect(0, 0, window.innerWidth, window.innerHeight);
   context.fillStyle = 'green';
   for (var id in players) {
     var player = players[id];
