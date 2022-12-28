@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const app = express();
 var server = http.Server(app);
 var io = socket(server);
+io.eio.pingTimeout = 120000;
 
 app.set('port', 5000);
 app.use(compression());
@@ -44,7 +45,7 @@ io.on('connection', function(socket) {
         if (data.Fire) bullets.push({x: player.x, y: player.y, direction: player.direction, time: 0})
         player.direction = data.direction
     })
-    socket.on('close', () => {
+    socket.on('disconnect', () => {
         delete players[socket.id];
     })
 })
@@ -52,6 +53,7 @@ io.on('connection', function(socket) {
 setInterval(() => {
     io.sockets.emit('state', players);
     io.sockets.emit('entities', bullets);
+    let newBullets = bullets
     for (id in bullets) {
         bullet = bullets[id]
         bullet.x = bullet.x += Math.cos(bullet.direction) * 10
@@ -59,10 +61,11 @@ setInterval(() => {
         bullet.time++
         if (bullet.time > 10*(1000/60)) {
             if (bullets.length == 1) {
-                bullets = []
+                newBullets = []
             } else {
-                bullets = bullets.splice(id, 1)
+                newBullets.splice(id, 1)
             }
         }
     }
+    bullets = newBullets
 }, 1000 / 60)
