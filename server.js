@@ -44,12 +44,12 @@ io.on('connection', function(socket) {
         if (data.W) player.y -= player.speed
         if (data.D) player.x += player.speed
         if (data.S) player.y += player.speed
-        if (data.Fire) bullets.push({x: player.x, y: player.y, direction: player.direction, time: 0})
+        if (data.Fire) bullets.push({x: player.x + Math.cos(player.direction) * 30, y: player.y + Math.sin(player.direction) * 30, direction: player.direction, time: 0})
         player.direction = data.direction
     })
     socket.on('hit', () => {
         var player = players[socket.id] || {};
-        player.speed = 2;
+        player.speed = 1;
         player.slowcooldown = 1;
     })
     socket.on('disconnect', () => {

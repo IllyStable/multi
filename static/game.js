@@ -76,6 +76,9 @@ socket.on('state', function(players) {
     var player = players[id];
     context.beginPath();
 
+    if (player.speed == 1) context.fillStyle="red"
+    else context.fillStyle="green";
+
     context.translate(player.x, player.y)
     context.rotate(player.direction)
     context.fillRect(20, -5, 30, 10);
@@ -94,6 +97,8 @@ socket.on('entities', function(entities) {
     for (var id in entities) {
         var entity = entities[id];
         context.beginPath();
+        
+        context.fillStyle="green"
 
         context.translate(entity.x, entity.y)
         context.rotate(entity.direction)
