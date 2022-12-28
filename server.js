@@ -41,7 +41,7 @@ io.on('connection', function(socket) {
         if (data.W) player.y -= 5
         if (data.D) player.x += 5
         if (data.S) player.y += 5
-        if (data.Fire) bullets.push({x: player.x, y: player.y, direction: player.direction})
+        if (data.Fire) bullets.push({x: player.x, y: player.y, direction: player.direction, time: 0})
         player.direction = data.direction
     })
     socket.on('close', () => {
@@ -52,9 +52,17 @@ io.on('connection', function(socket) {
 setInterval(() => {
     io.sockets.emit('state', players);
     io.sockets.emit('entities', bullets);
-    for (bullet in bullets) {
-        bullet = bullets[bullet]
+    for (id in bullets) {
+        bullet = bullets[id]
         bullet.x = bullet.x += Math.cos(bullet.direction) * 10
         bullet.y = bullet.y += Math.sin(bullet.direction) * 10
+        bullet.time++
+        if (bullet.time > 10*(1000/60)) {
+            if (bullets.length == 1) {
+                bullets = []
+            } else {
+                bullets = bullets.splice(id, 1)
+            }
+        }
     }
 }, 1000 / 60)
